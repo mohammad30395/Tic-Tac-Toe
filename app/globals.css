@@ -44,6 +44,8 @@ select {
   width: min(1180px, 100%);
   margin: 0 auto;
   padding: clamp(12px, 2vw, 24px);
+  overflow: hidden;
+  min-width: 0;
 }
 
 .panel {
@@ -80,4 +82,24 @@ select {
     linear-gradient(90deg, rgba(255, 255, 255, 0.18) 1px, transparent 1px),
     linear-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px);
   background-size: 32px 32px;
+}
+
+.game-board-size {
+  width: min(100%, 62dvh);
+  max-width: 560px;
+  border-width: clamp(5px, 1.4vmin, 10px);
+}
+
+@media (max-width: 640px) {
+  .page-shell {
+    padding: 8px;
+  }
+
+  .game-board-size {
+    width: min(100%, 50dvh);
+  }
+
+  .panel {
+    box-shadow: 0 10px 28px rgba(21, 27, 38, 0.1);
+  }
 }

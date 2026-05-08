@@ -145,29 +145,29 @@ export default function GamePage() {
 
   return (
     <main className={`app-screen ${arena.className}`}>
-      <section className="page-shell grid grid-rows-[auto_auto_1fr_auto] gap-2 sm:gap-3">
+      <section className="page-shell grid grid-rows-[auto_auto_minmax(0,1fr)_auto] gap-2 sm:gap-3">
         <AppHeader compact title={`${names.X} vs ${names.O}`} subtitle={`${arena.name} • ${match.mode === "computer" ? `${match.difficulty} computer` : "two players"}`} />
         <ScoreStrip scores={scores} playerOne={names.X} playerTwo={names.O} />
 
-        <div className="panel grid min-h-0 grid-rows-[auto_1fr] gap-2 rounded-lg p-3">
+        <div className="panel grid min-h-0 min-w-0 grid-rows-[auto_minmax(0,1fr)] gap-2 rounded-lg p-2 sm:p-3">
           <div className="flex items-center justify-between gap-2">
-            <p className="truncate text-sm font-black text-slate-900">{message}</p>
+            <p className="truncate text-xs font-black text-slate-900 sm:text-sm">{message}</p>
             {locked ? (
-              <PrimaryButton className="px-3 py-2" onClick={nextGame}>
+              <PrimaryButton className="px-3 py-1.5 sm:py-2" onClick={nextGame}>
                 Next
               </PrimaryButton>
             ) : null}
           </div>
 
-          <div className="grid min-h-0 place-items-center">
+          <div className="grid min-h-0 min-w-0 place-items-center overflow-hidden">
             <div
-              className={`grid aspect-square h-full max-h-full max-w-full grid-cols-3 gap-2 rounded-lg p-2 ${arena.boardClass}`}
+              className={`game-board-size grid aspect-square grid-cols-3 gap-1.5 rounded-lg p-1.5 sm:gap-2 sm:p-2 ${arena.boardClass}`}
               style={{ backgroundColor: profile.gridColor }}
             >
               {board.map((cell, index) => (
                 <button
                   aria-label={`Cell ${index + 1}`}
-                  className="focus-ring grid min-h-0 place-items-center rounded-md bg-white/95 text-[clamp(2rem,12vmin,5rem)] font-black leading-none transition hover:bg-white disabled:cursor-not-allowed"
+                  className="focus-ring grid min-h-0 place-items-center rounded-md bg-white/95 text-[clamp(1.8rem,11vmin,5rem)] font-black leading-none transition hover:bg-white disabled:cursor-not-allowed"
                   disabled={locked || Boolean(cell) || (match.mode === "computer" && turn === "O")}
                   key={index}
                   type="button"
@@ -180,8 +180,8 @@ export default function GamePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-[1fr_auto] items-center gap-3">
-          <p className="truncate text-xs font-bold text-white drop-shadow md:text-sm">
+        <div className="grid min-w-0 grid-cols-[1fr_auto] items-center gap-2">
+          <p className="truncate text-[11px] font-bold text-white drop-shadow md:text-sm">
             Records this session: {records.length ? records.map((record) => `Game ${record.gameNumber}: ${record.winner}`).join(" | ") : "No completed games yet"}
           </p>
           <PrimaryButton variant="secondary" onClick={quitGame}>
