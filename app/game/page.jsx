@@ -9,6 +9,28 @@ import { getComputerMove, getWinner } from "@/lib/game";
 import { addLeaderboardRecord, readArena, readMatchConfig, readProfile } from "@/lib/storage";
 
 const blankBoard = Array(9).fill(null);
+const winningLineStyles = {
+  "0-1-2": { top: "16.666%", left: "50%", width: "84%", transform: "translate(-50%, -50%)" },
+  "3-4-5": { top: "50%", left: "50%", width: "84%", transform: "translate(-50%, -50%)" },
+  "6-7-8": { top: "83.333%", left: "50%", width: "84%", transform: "translate(-50%, -50%)" },
+  "0-3-6": { top: "50%", left: "16.666%", width: "84%", transform: "translate(-50%, -50%) rotate(90deg)" },
+  "1-4-7": { top: "50%", left: "50%", width: "84%", transform: "translate(-50%, -50%) rotate(90deg)" },
+  "2-5-8": { top: "50%", left: "83.333%", width: "84%", transform: "translate(-50%, -50%) rotate(90deg)" },
+  "0-4-8": { top: "50%", left: "50%", width: "118%", transform: "translate(-50%, -50%) rotate(45deg)" },
+  "2-4-6": { top: "50%", left: "50%", width: "118%", transform: "translate(-50%, -50%) rotate(-45deg)" }
+};
+
+function getWinningLineStyle(line, symbol, profile) {
+  if (!line?.length || !symbol || symbol === "draw") return null;
+
+  const placement = winningLineStyles[line.join("-")];
+  if (!placement) return null;
+
+  return {
+    ...placement,
+    backgroundColor: symbol === "X" ? profile.xColor : profile.oColor
+  };
+}
 
 export default function GamePage() {
   const router = useRouter();
@@ -21,6 +43,8 @@ export default function GamePage() {
   const [records, setRecords] = useState([]);
   const [message, setMessage] = useState("Player 1 starts with X");
   const [locked, setLocked] = useState(false);
+  const [winningLine, setWinningLine] = useState(null);
+  const [winningSymbol, setWinningSymbol] = useState(null);
 
   useEffect(() => {
     const storedProfile = readProfile();
@@ -81,6 +105,8 @@ export default function GamePage() {
     };
 
     setLocked(true);
+    setWinningLine(result.symbol === "draw" ? null : result.line);
+    setWinningSymbol(result.symbol === "draw" ? null : result.symbol);
     setMessage(outcome.label);
     setScores((current) => ({
       ...current,
@@ -113,6 +139,8 @@ export default function GamePage() {
     setBoard(blankBoard);
     setTurn("X");
     setLocked(false);
+    setWinningLine(null);
+    setWinningSymbol(null);
     setMessage(`${names.X} starts with X`);
   }
 
@@ -143,6 +171,8 @@ export default function GamePage() {
 
   if (!profile || !arena || !match) return null;
 
+  const winningLineStyle = getWinningLineStyle(winningLine, winningSymbol, profile);
+
   return (
     <main className={`app-screen ${arena.className}`}>
       <section className="page-shell grid grid-rows-[auto_auto_minmax(0,1fr)_auto] gap-2 sm:gap-3">
@@ -161,13 +191,18 @@ export default function GamePage() {
 
           <div className="grid min-h-0 min-w-0 place-items-center overflow-hidden">
             <div
-              className={`game-board-size grid aspect-square grid-cols-3 gap-1.5 rounded-lg p-1.5 sm:gap-2 sm:p-2 ${arena.boardClass}`}
+              className={`game-board-size relative grid aspect-square grid-cols-3 gap-1.5 rounded-lg p-1.5 sm:gap-2 sm:p-2 ${arena.boardClass}`}
               style={{ backgroundColor: profile.gridColor }}
             >
+              {winningLineStyle ? (
+                <div className="winning-line pointer-events-none absolute z-20" style={winningLineStyle}>
+                  <span className="winning-line-fill" />
+                </div>
+              ) : null}
               {board.map((cell, index) => (
                 <button
                   aria-label={`Cell ${index + 1}`}
-                  className="focus-ring grid min-h-0 place-items-center rounded-md bg-white/95 text-[clamp(1.8rem,11vmin,5rem)] font-black leading-none transition hover:bg-white disabled:cursor-not-allowed"
+                  className="focus-ring relative z-10 grid min-h-0 place-items-center rounded-md bg-white/95 text-[clamp(1.8rem,11vmin,5rem)] font-black leading-none transition hover:bg-white disabled:cursor-not-allowed"
                   disabled={locked || Boolean(cell) || (match.mode === "computer" && turn === "O")}
                   key={index}
                   type="button"
