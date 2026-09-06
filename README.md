@@ -141,4 +141,6 @@ npm run start
 
 ## License
 
-No license file is currently included in this repository. Add one before publishing or distributing the project publicly.
+This project is licensed under the MIT License.
+
+Copyright (c) 2026 Mohammad Mahmudul Kabir Fahmid. See the `LICENSE` file for details.
