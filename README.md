@@ -143,4 +143,4 @@ npm run start
 
 This project is licensed under the MIT License.
 
-Copyright (c) 2026 Mohammad Mahmudul Kabir Fahmid. See the `LICENSE` file for details.
+Copyright (c) 2026 Mohammad Mahmudul Kabir Fahmid. See the [LICENSE](LICENSE) file for details.
